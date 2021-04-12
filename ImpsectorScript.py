@@ -5,7 +5,7 @@ import os
 import imp
 os.chdir(r"C:\Users\james\OneDrive\Sheffield\Building\Manipulator\Stimulus_Control")
 stim = imp.load_source('Stimulus', 'Stimulus.py')
-
+print('ol')
 prepFolder = "D:\\JDoggyDog\\TEST2\\"
 if not os.path.isdir(prepFolder):
 	os.mkdir(prepFolder)
