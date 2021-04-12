@@ -27,7 +27,7 @@ grating.savevideo = "0"
 # setup imspector measurement
 m = lvbt.measurement("Measurement 1")
 
-# run a stimulus, export it and save it.
+# run a stimulus, export it and save it. (this could be functionalised)
 recordingDir, basename = stim.generate_recording_folder(prepFolder)
 whitescreen.setup()
 whitescreen.trigger()
@@ -36,6 +36,7 @@ m.export(recordingDir, basename)
 whitescreen.save(recordingFolder + basename + "_stimulus.txt")
 whitescreen.reset()
 
+# run a second stimulus
 recordingDir, basename = stim.generate_recording_folder(prepFolder)
 grating.setup()
 grating.trigger()
