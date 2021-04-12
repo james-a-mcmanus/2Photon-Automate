@@ -1,0 +1,93 @@
+import numpy as np
+from serial import Serial
+import sys
+from math import ceil
+import time
+
+sys.stderr = open('errors.txt', 'w')
+
+comport = 'COM25'
+
+class Port(Serial):
+    """
+    Serial port to communicate triggering, aspects of the stimulus.
+    """
+    def __init__(self, comport, baudrate):
+        super().__init__(comport, baudrate, timeout=1)
+        if(self.isOpen() == False):
+            self.open()
+            self.flushInput() # flush the buffer.
+
+    def wait_for_trigger(self, params=None):
+        self.flushInput()
+        Ported = False
+        while not Ported:
+            dat = self.read()
+            if dat == b't':
+                Ported = True # is this necessary? may save a couple us by removing.
+              
+    def sendover(self, message):
+        self.write(str.encode(str(message) + "\n"))
+
+class StimulusParameters(Parameters):
+    def __init__(self):
+
+        self.message = None
+        self.adaptionduration = "0"
+        self.xpos = "451"
+        self.ypos = "519"
+        self.xscale = "1"
+        self.yscale = "600"
+        self.angle = "0"
+        self.framelength = "3"
+        self.whitebackground = "0"
+        self.inversecolor = "0"
+        self.externaltrigger = "1"
+        self.savevideo = "1"
+        self.repeatstim = "1"
+        self.filename = "whitescreen.mat"
+
+    def quit(self, port):
+        port.write(b'Q\n')
+
+    def save(self, port, filename):
+        port.write(b'S\n')
+        with open(fname, 'w') as f:
+            f.write('\n'.join(["parameters.%s = %s" % (k,v) for k,v in self.__dict__.items()]))        
+
+    def reset(self, port):
+        port.write(b'R\n')
+
+    def change_parameters(self, port):
+        port.write(b'C\n')
+        port.sendover(self.adaptionduration)
+        port.sendover(self.xpos)
+        port.sendover(self.ypos)
+        port.sendover(self.xscale)
+        port.sendover(self.yscale)
+        port.sendover(self.angle)
+        port.sendover(self.framelength)
+        port.sendover(self.whitebackground)
+        port.sendover(self.inversecolor)
+        port.sendover(self.externaltrigger)
+        port.sendover(self.savevideo)
+        port.sendover(self.repeatstim)
+
+    def load(self, port):
+        port.write(b'L\n')
+        port.sendover(self.filename)
+
+    def trigger(self, port):
+        port.write(b'T\n')
+
+    def setup(self, port):
+        self.load(port)
+        self.change_parameters(port)
+
+
+def generate_recordingfolder(prepFolder):
+        basename = get_fname()
+        recordingFolder = prepFolder + "\\" + basename + "\\"
+        if not os.path.isdir(recordingFolder):
+            os.mkdir(recordingFolder)
+        return (recordingFolder, basename)
