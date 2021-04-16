@@ -10,6 +10,7 @@ sys.stderr = open('errors.txt', 'w')
 comport = 'COM25'
 baudrate = 115200
 
+
 class Port(Serial):
     """
     Serial port to communicate triggering, aspects of the stimulus.
