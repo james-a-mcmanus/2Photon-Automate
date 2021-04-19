@@ -25,8 +25,13 @@ try:
     m = lvbt.measurement("Measurement 1")
     # run a stimulus, export it and save it. (this could be functionalised)
 
-    stimuli = listim.dyna_gratings(speed=[2,3],noise=True)
-
+    stimuli = listim.algratings([1],[40,60],2)
+    stimuli+=listim.dyna_gratings(speed=[2,3],noise=True)
+    stimuli+=listim.rf_bars()
+    stimuli+=listim.repeat_stim('flash1200.mat',1200,0,3)
+    print(listim.names(stimuli))
+    duration = int(700/15.3*len(listim.names(stimuli)))
+    print('Duration: ',str(datetime.timedelta(seconds=duration)))
     for stimulus in stimuli:
         dt = datetime.datetime.now().strftime('%y%m%d%H%M%S')
         recordingFolder, basename = stim.generate_recording_folder(prepFolder,dt)

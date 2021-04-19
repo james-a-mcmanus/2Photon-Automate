@@ -74,3 +74,9 @@ def algratings(speeds,thicks,repeat):
                 grating.thick = "0"
                 stim_list.append(grating)
     return stim_list
+
+def names(stimuli):
+    res = []
+    for stimulus in stimuli:
+        res.append(stimulus.filename)
+    return res
