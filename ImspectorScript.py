@@ -24,14 +24,18 @@ try:
     # setup imspector measurement
     m = lvbt.measurement("Measurement 1")
     # run a stimulus, export it and save it. (this could be functionalised)
-
-    stimuli = listim.algratings([1],[40,60],2)
-    stimuli+=listim.dyna_gratings(speed=[2,3],noise=True)
-    stimuli+=listim.rf_bars()
-    stimuli+=listim.repeat_stim('flash1200.mat',1200,0,3)
+    stimuli = []
+    #stimuli += listim.algratings([1],[40,60],2)
+    #stimuli += listim.dyna_gratings(speed=[2,3],noise=True)
+    #stimuli += listim.rf_bars()
+    #stimuli += listim.repeat_stim('flash1200.mat',0,3)
+    stimuli += listim.one_stim('300to1blink1.mat',0)
+    
     print(listim.names(stimuli))
-    duration = int(700/15.3*len(listim.names(stimuli)))
+    inter_time = 12
+    duration = int((700/15.3+inter_time)*len(listim.names(stimuli)))-inter_time
     print('Duration: ',str(datetime.timedelta(seconds=duration)))
+    
     for stimulus in stimuli:
         dt = datetime.datetime.now().strftime('%y%m%d%H%M%S')
         recordingFolder, basename = stim.generate_recording_folder(prepFolder,dt)

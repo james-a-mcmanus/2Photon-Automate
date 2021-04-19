@@ -3,6 +3,7 @@ import Experiment_parameters as exp
 import Generate
 
 import numpy as np
+import re
 
 def bars(speed,reverse):
     if speed>2:
@@ -33,33 +34,35 @@ def dyna_gratings(speed,noise=True,reverse = False,generate_angle_file=True,file
         stim_list.append(dgrating)
     return stim_list
 
-def rf_bars():
+def rf_bars(repeat=1):
     stim_list = []
-    rf_bar = Stimulus.StimulusParameters()
-    rf_bar.filename = '50movc0bar5.mat'
-    rf_bar.savevideo = "1"
-    rf_bar.externaltrigger = "1"
-    rf_bar.repeatstim = "0"
-    rf_bar.framelength = "5"
-    
-    rf_bar.angle = "90"
-    stim_list.append(rf_bar)
-    rf_bar.angle = "0"
-    stim_list.append(rf_bar)
+    for i in range(repeat):
+        for angle in [90,0]:
+            rf_bar = Stimulus.StimulusParameters()
+            rf_bar.filename = '50movc0bar5.mat'
+            rf_bar.savevideo = "1"
+            rf_bar.externaltrigger = "1"
+            rf_bar.repeatstim = "0"
+            rf_bar.framelength = "5"     
+            rf_bar.angle = str(angle)
+            stim_list.append(rf_bar)
     return stim_list
     
-def repeat_stim(name,framelength,angle,n):
+def repeat_stim(name,angle,n):
     stim_list = []
     stim = Stimulus.StimulusParameters()
     stim.filename = name
     stim.savevideo = "1"
     stim.externaltrigger = "1"
     stim.repeatstim = "0"
-    stim.framelength = framelength
+    stim.framelength = re.findall(r'\d+', name)[-1]
     stim.angle = angle
     stim_list = [stim]*n
     return stim_list    
-
+    
+def one_stim(name,angle):
+    return repeat_stim(name,angle,1)
+    
 def algratings(speeds,thicks,repeat):
     stim_list = []
     for i in range(repeat):
