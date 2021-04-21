@@ -3,17 +3,20 @@ from serial import Serial
 import sys
 from math import ceil
 import time
+import os
 
 sys.stderr = open('errors.txt', 'w')
 
 comport = 'COM25'
+baudrate = 115200
+
 
 class Port(Serial):
     """
     Serial port to communicate triggering, aspects of the stimulus.
     """
-    def __init__(self, comport, baudrate):
-        super().__init__(comport, baudrate, timeout=1)
+    def __init__(self, comport='COM25', baudrate=115200):
+        super(Port,self).__init__(comport, baudrate, timeout=1)
         if(self.isOpen() == False):
             self.open()
             self.flushInput() # flush the buffer.
@@ -28,7 +31,24 @@ class Port(Serial):
               
     def sendover(self, message):
         self.write(str.encode(str(message) + "\n"))
-
+        
+class Parameters(object):
+    def parse_parameters(self, paramlist):
+        for parameter in paramlist:
+            parameter = parameter.split()
+            paramtype = parameter[0]
+            paramvalue = parameter[1:]
+            self.parse_parameter(paramtype, paramvalue)
+    def parse_parameter(self, ptype, pvalue):
+        if ptype in self.__dict__.keys():
+            self.__setattr__(ptype, parse(pvalue))
+            #sys.stdout.write(ptype + ": " + str(parse(pvalue)) + "\n")
+            #sys.stdout.flush()
+        else:
+            raise Exception("No attribute named: %s", ptype)
+    def save(self, fname):
+        with open(fname, 'w') as f:
+            f.write('\n'.join(["parameters.%s = %s" % (k,v) for k,v in self.__dict__.items()]))
 class StimulusParameters(Parameters):
     def __init__(self):
 
@@ -50,9 +70,14 @@ class StimulusParameters(Parameters):
     def quit(self, port):
         port.write(b'Q\n')
 
-    def save(self, port, filename):
-        port.write(b'S\n')
-        with open(fname, 'w') as f:
+    def save(self, port, filename, dt = None):
+        if dt is None:
+            port.write(b'S\n')
+        else:
+            port.write(b'ST\n')
+            for char in dt:
+                port.sendover(char)
+        with open(filename, 'w') as f:
             f.write('\n'.join(["parameters.%s = %s" % (k,v) for k,v in self.__dict__.items()]))        
 
     def reset(self, port):
@@ -85,8 +110,7 @@ class StimulusParameters(Parameters):
         self.change_parameters(port)
 
 
-def generate_recordingfolder(prepFolder):
-        basename = get_fname()
+def generate_recording_folder(prepFolder,basename):
         recordingFolder = prepFolder + "\\" + basename + "\\"
         if not os.path.isdir(recordingFolder):
             os.mkdir(recordingFolder)
