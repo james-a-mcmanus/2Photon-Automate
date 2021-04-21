@@ -52,8 +52,10 @@ try:
         i += 1
     stimuli[-1].reset(port)
     stimuli[-1].quit(port)
+    wh.update('Experience finished!',size = 150)
 
     port.close()
 
 except:
     port.close()
+    wh.update('Experience finished by an exception!',size = 150)

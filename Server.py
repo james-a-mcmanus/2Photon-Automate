@@ -2,7 +2,9 @@ from pyngrok import ngrok
 import SMS
 import datetime
 import os
+import Write_html as wh
 def start():
+    wh.update("No experiment right now. <br> How's it going anyway?",100)
     os.chdir('C:\\Users\\lvbt\\Documents')
     # Open a HTTP tunnel on the default port 80
     # <NgrokTunnel: "http://<public_sub>.ngrok.io" -> "http://localhost:80">
