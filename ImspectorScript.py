@@ -8,12 +8,12 @@ import time
 import numpy as np
 import random
 
-
 os.chdir(r"C:\Users\lvbt\Documents\GitHub\2Photon-Automate")
 stim = imp.load_source('Stimulus', 'Stimulus.py')
 exp = imp.load_source('Experiment_parameters', 'Experiment_parameters.py')
 gen = imp.load_source('Generate', 'Generate.py')
 listim = imp.load_source('List_stimuli', 'List_stimuli.py')
+wh = imp.load_source('Write_html', 'Write_html.py')
 
 prepFolder = exp.prepFolder
 if not os.path.isdir(prepFolder):
@@ -35,8 +35,10 @@ try:
     inter_time = 12
     duration = int((700/15.3+inter_time)*len(listim.names(stimuli)))-inter_time
     print('Duration: ',str(datetime.timedelta(seconds=duration)))
-    
+    i = 0
     for stimulus in stimuli:
+        percentage = int(100*i/len(stimuli))
+        wh.update(str(percentage)+'% done<br>('+str(datetime.timedelta(seconds=duration*(100-percentage)/100))+' left)',size = 150)
         dt = datetime.datetime.now().strftime('%y%m%d%H%M%S')
         recordingFolder, basename = stim.generate_recording_folder(prepFolder,dt)
         stimulus.setup(port)
@@ -47,7 +49,7 @@ try:
             break
         m.export(recordingFolder, basename)
         stimulus.save(port,recordingFolder + basename + "_stimulus.txt",dt = dt)
-
+        i += 1
     stimuli[-1].reset(port)
     stimuli[-1].quit(port)
 
