@@ -37,8 +37,9 @@ try:
     print('Duration: ',str(datetime.timedelta(seconds=duration)))
     i = 0
     for stimulus in stimuli:
+        t0 = time.time()
         percentage = int(100*i/len(stimuli))
-        wh.update(str(percentage)+'% done<br>('+str(datetime.timedelta(seconds=duration*(100-percentage)/100))+' left)',size = 150)
+        wh.update(str(percentage)+'%<br>'+stimulus.filename+'<br>('+str(datetime.timedelta(seconds=duration*(100-percentage)/100))+' left)',size = 70)
         dt = datetime.datetime.now().strftime('%y%m%d%H%M%S')
         recordingFolder, basename = stim.generate_recording_folder(prepFolder,dt)
         stimulus.setup(port)
@@ -50,12 +51,13 @@ try:
         m.export(recordingFolder, basename)
         stimulus.save(port,recordingFolder + basename + "_stimulus.txt",dt = dt)
         i += 1
+        duration = int((time.time()-t0)*len(stimuli))
     stimuli[-1].reset(port)
     stimuli[-1].quit(port)
-    wh.update('Experience finished!',size = 150)
+    wh.update('Experiment finished!',size = 150)
 
     port.close()
 
 except:
     port.close()
-    wh.update('Experience finished by an exception!',size = 150)
+    wh.update('Experiment finished by an exception!',size = 150)

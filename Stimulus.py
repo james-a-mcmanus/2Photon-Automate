@@ -75,10 +75,10 @@ class StimulusParameters(Parameters):
             port.write(b'S\n')
         else:
             port.write(b'ST\n')
-            for char in dt:
-                port.sendover(char)
+            port.sendover(dt)
         with open(filename, 'w') as f:
-            f.write('\n'.join(["parameters.%s = %s" % (k,v) for k,v in self.__dict__.items()]))        
+            f.write('\n'.join(["parameters.%s = %s" % (k,v) for k,v in self.__dict__.items()]))         
+
 
     def reset(self, port):
         port.write(b'R\n')
